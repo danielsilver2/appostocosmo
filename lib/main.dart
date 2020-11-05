@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:appostocosmo/services/firebase_service.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'dart:io';
 
 void main() {
   runApp(MaterialApp(
+    debugShowCheckedModeBanner: false,
     title: "Posto Cosmo",
     home: Principal(),
   ));
@@ -12,6 +15,12 @@ void main() {
 class Principal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    FirebaseService fBService = FirebaseService.shared;
+    if (Platform.isIOS) {
+      fBService.requestNotificationToken((accepted, service) {});
+    }
+    fBService.requestToken().then((value) => fBService.fcmToken = value);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
@@ -142,13 +151,14 @@ class Pontos extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
-        initialUrl:
-        'https://postocosmo.com.br/minha-conta/points-and-rewards/',
+        initialUrl: 'https://postocosmo.com.br/minha-conta/points-and-rewards/',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
@@ -267,9 +277,11 @@ class Ofertas extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl: 'https://postocosmo.com.br/ofertas/',
@@ -391,9 +403,11 @@ class Localizacao extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl: 'https://goo.gl/maps/jomGo62oqqatcRsJ6',
@@ -515,9 +529,11 @@ class Convenios extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl: 'https://postocosmo.com.br/convenios/',
@@ -639,13 +655,15 @@ class Avaliar extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl:
-        'https://www.google.com/search?sxsrf=ALeKk01wKNFV_M7OmVGMuyY-OZ155bK7dA%3A1602005319974&ei=R6l8X9OKO6Sy5OUP7tmOqAc&q=posto+cosmo+itaporanga&oq=posto+cosmo+i&gs_lcp=CgZwc3ktYWIQARgAMgIIADoGCAAQFhAeULeJAVjkiQFgkpYBaABwAHgAgAH9AYgBqwWSAQUwLjEuMpgBAKABAaoBB2d3cy13aXrAAQE&sclient=psy-ab#lrd=0x7a69dff95e70c77:0x3f7d77753619f4af,3,,,',
+            'https://www.google.com/search?sxsrf=ALeKk01wKNFV_M7OmVGMuyY-OZ155bK7dA%3A1602005319974&ei=R6l8X9OKO6Sy5OUP7tmOqAc&q=posto+cosmo+itaporanga&oq=posto+cosmo+i&gs_lcp=CgZwc3ktYWIQARgAMgIIADoGCAAQFhAeULeJAVjkiQFgkpYBaABwAHgAgAH9AYgBqwWSAQUwLjEuMpgBAKABAaoBB2d3cy13aXrAAQE&sclient=psy-ab#lrd=0x7a69dff95e70c77:0x3f7d77753619f4af,3,,,',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
@@ -764,9 +782,11 @@ class Cadastro extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl: 'https://postocosmo.com.br/registro/',
@@ -888,9 +908,11 @@ class Senha extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl: 'https://postocosmo.com.br/minha-conta/lost-password/',
@@ -1012,13 +1034,15 @@ class Politica extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
-        title: Image.asset('icone/logoapposto.jpg',
+        title: Image.asset(
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
-          height: 38,),
+          height: 38,
+        ),
       ),
       body: WebView(
         initialUrl:
-        'https://postocosmo.com.br/politica-de-privacidade-e-uso-do-sistema/',
+            'https://postocosmo.com.br/politica-de-privacidade-e-uso-do-sistema/',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
