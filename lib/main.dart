@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:appostocosmo/home.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -25,7 +25,7 @@ class Splash extends State<SplashScreen> {
   Widget build(BuildContext context) {
     Timer(
         Duration(seconds: 3),
-            () => Navigator.push(
+        () => Navigator.push(
             context, MaterialPageRoute(builder: (context) => Principal())));
 
     return Scaffold(

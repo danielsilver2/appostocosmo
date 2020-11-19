@@ -1,6 +1,6 @@
+import 'package:appostocosmo/services/firebase_service.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:postodolago/services/firebase_service.dart';
 import 'dart:io';
 
 void main() {
@@ -25,7 +25,7 @@ class Principal extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -43,7 +43,7 @@ class Principal extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/logocosmo.png"),
+                    image: AssetImage("icone/logocosmo.png"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -154,14 +154,13 @@ class Pontos extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
       ),
       body: WebView(
-        initialUrl:
-        'https://postocosmo.com.br/minha-conta/points-and-rewards/',
+        initialUrl: 'https://postocosmo.com.br/minha-conta/points-and-rewards/',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
@@ -173,7 +172,7 @@ class Pontos extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/logocosmo.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -281,7 +280,7 @@ class Ofertas extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -299,7 +298,7 @@ class Ofertas extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/lagoquadrada.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -407,7 +406,7 @@ class Localizacao extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -425,7 +424,7 @@ class Localizacao extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/logocosmo.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -533,7 +532,7 @@ class Convenios extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -551,7 +550,7 @@ class Convenios extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/logocosmo.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -659,7 +658,7 @@ class Avaliar extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -677,7 +676,7 @@ class Avaliar extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/lagoquadrada.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -785,7 +784,7 @@ class Cadastro extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
@@ -803,7 +802,7 @@ class Cadastro extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/lagoquadrada.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -911,14 +910,13 @@ class Senha extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
       ),
       body: WebView(
-        initialUrl:
-        'https://postocosmo.com.br/minha-conta/lost-password/',
+        initialUrl: 'https://postocosmo.com.br/minha-conta/lost-password/',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
@@ -930,7 +928,7 @@ class Senha extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/lagoquadrada.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),
@@ -1038,14 +1036,14 @@ class Politica extends StatelessWidget {
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'images/logoapposto.jpg',
+          'icone/logoapposto.jpg',
           fit: BoxFit.cover,
           height: 38,
         ),
       ),
       body: WebView(
         initialUrl:
-        'https://postocosmo.com.br/politica-de-privacidade-e-uso-do-sistema/',
+            'https://postocosmo.com.br/politica-de-privacidade-e-uso-do-sistema/',
         javascriptMode: JavascriptMode.unrestricted,
       ),
       drawer: Drawer(
@@ -1057,7 +1055,7 @@ class Politica extends StatelessWidget {
               decoration: BoxDecoration(
                   color: Color(0xffffffff),
                   image: DecorationImage(
-                    image: AssetImage("images/lagoquadrada.jpg"),
+                    image: AssetImage("icone/lagoquadrada.jpg"),
                     fit: BoxFit.cover,
                   )),
             ),

@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "65686789773",
+    "firebase_url": "https://appposto-cosme.firebaseio.com",
+    "project_id": "appposto-cosme",
+    "storage_bucket": "appposto-cosme.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65686789773:android:7aff662e11d2dfdce8ccc4",
+        "android_client_info": {
+          "package_name": "br.com.appostocosmo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65686789773-jrb7kntr696crkf70u4th5emcu4ne6hu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz3BrXEDdUJlqo_BU2DpVDobcxekkG30I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65686789773-jrb7kntr696crkf70u4th5emcu4ne6hu.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
