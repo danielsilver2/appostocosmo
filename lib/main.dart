@@ -23,17 +23,29 @@ class Splash extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-    Timer(
-        Duration(seconds: 3),
-        () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Principal())));
+    Timer(Duration(seconds: 3),
+      () => Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Home()),
+      ),
+    );
 
     return Scaffold(
-        body: Container(
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                    fit: BoxFit.fill,
-                    image: Image.asset('icone/splash.jpg', fit: BoxFit.fill)
-                        .image))));
+      body: Container(
+        decoration: BoxDecoration(
+          color: Color(0xff493163)
+        ),
+        child: Center(
+          child: Container(
+            width: 200,
+            height: 200,
+            child: Image(
+              fit: BoxFit.fill,
+              image: Image.asset('icone/splash_icon.png')
+              .image,
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

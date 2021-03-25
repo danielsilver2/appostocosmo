@@ -380,10 +380,10 @@ EXTERNAL SOURCES:
 SPEC CHECKSUMS:
   abseil: 6c8eb7892aefa08d929b39f9bb108e5367e3228f
   BoringSSL-GRPC: 8edf627ee524575e2f8d19d56f068b448eea3879
-  cloud_firestore: 19c6f947dd14be9d71695ea23eefde67cd8829c8
+  cloud_firestore: f4a749cf7ca58ff9bb313d70987f10796f2c0ddd
   Firebase: 8db6f2d1b2c5e2984efba4949a145875a8f65fe5
-  firebase_core: 350ba329d1641211bc6183a3236893cafdacfea7
-  firebase_messaging: 0aea2cd5885b65e19ede58ee3507f485c992cc75
+  firebase_core: a58a4f715b204ed8b1bf202a1aa7e8f35f54d1d5
+  firebase_messaging: dfddff3d3b34272f6fc8ad18885f5cfae159dea6
   FirebaseCore: d889d9e12535b7f36ac8bfbf1713a0836a3012cd
   FirebaseCoreDiagnostics: 770ac5958e1372ce67959ae4b4f31d8e127c3ac1
   FirebaseFirestore: adff4877869ca91a11250cc0989a6cd56bad163f
@@ -399,8 +399,8 @@ SPEC CHECKSUMS:
   nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   Protobuf: 3dac39b34a08151c6d949560efe3f86134a3f748
-  shared_preferences: af6bfa751691cdc24be3045c43ec037377ada40d
-  webview_flutter: d2b4d6c66968ad042ad94cbb791f5b72b4678a96
+  shared_preferences: 5d0fc5691f4e7293ddfc1b599ca398f8af42f5e7
+  webview_flutter: a3b9e4679e9d293d558e31a972c748262362e1b1
 
 PODFILE CHECKSUM: fe0e1ee7f3d1f7d00b11b474b62dd62134535aea
 

@@ -1,1143 +1,194 @@
-import 'package:appostocosmo/services/firebase_service.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'dart:io';
+import 'services/firebase_service.dart';
 
-void main() {
-  runApp(MaterialApp(
-    title: "Posto Cosmo",
-    home: Principal(),
-  ));
+class Home extends StatefulWidget {
+  @override
+  _HomeState createState() => _HomeState();
 }
 
-/// TELA INICIAL
-class Principal extends StatelessWidget {
+class _HomeState extends State<Home> {
+
+  final Completer<WebViewController> _controller = Completer<WebViewController>();
+  bool _isLoading = false;
+
+  String _hostUrl = "https://postocosmo.com.br/";
+  String _logoPath = "icone/logocosmo.png";
+  String _appPostoLogoPath = "icone/logoapposto.jpg";
+  String _urlLocalizacao = "https://goo.gl/maps/49T4b1pLSoe5gcM2A";
+
   @override
   Widget build(BuildContext context) {
     FirebaseService fBService = FirebaseService.shared;
     if (Platform.isIOS) {
       fBService.requestNotificationToken((accepted, service) {});
     }
-    fBService.requestToken().then((value) => fBService.fcmToken = value);
+    fBService.requestToken().then((value) {
+      fBService.fcmToken = value;
+      print("TOKENNNNNNN: $value");
+    });
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
+    var body = 
+    Stack(
+      children: [
+        WebView(
+          onPageFinished: (url) {
+            print("should update loader to false .... /n/n");
+            _toggleLoader(false);
+          },
+          initialUrl: _hostUrl + 'new/',
+          javascriptMode: JavascriptMode.unrestricted,
+          onWebViewCreated: (WebViewController webViewController) {
+            _controller.complete(webViewController);
+          }
         ),
-      ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/new/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/logocosmo.png"),
-                    fit: BoxFit.cover,
-                  )),
+        _isLoading ? Container(
+          width: double.infinity,
+          height: double.infinity,
+          color: Colors.black,
+          child: Center(
+            child: Container(
+              width: 80,
+              height: 80,
+              child: CircularProgressIndicator()
             ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text(
-                'PONTUAÇÃO',
-                style: TextStyle(fontSize: 16.0),
+          ),
+        )
+        : Stack(),
+      ]
+    );
+
+    OfflineBuilder offBuilder = OfflineBuilder(
+      child: body,
+      connectivityBuilder: (
+        BuildContext context,
+        ConnectivityResult connectivity,
+        Widget child,
+      ) {
+        final bool connected = connectivity != ConnectivityResult.none;
+
+        return Stack(
+          children: [
+            body,
+            !connected ?
+            Container(
+              width: double.infinity,
+              height: double.infinity,
+              color: Colors.black,
+              child: Center(
+                child: Container(
+                  child: Text(
+                    "Você está sem internet!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20
+                    ),
+                  ),
+                ),
               ),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
+            ): Stack()
           ],
-        ),
-      ),
+        );
+      },
     );
-  }
-}
 
-/// TELA PONTOS
-class Pontos extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color(0xff493163),
         centerTitle: true,
         title: Image.asset(
-          'icone/logoapposto.jpg',
+          _appPostoLogoPath,
           fit: BoxFit.cover,
           height: 38,
         ),
       ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/minha-conta/points-and-rewards/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/logocosmo.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
+      body: offBuilder,
+      drawer: _buildDrawer(),
     );
   }
-}
 
-/// TELA OFERTAS
-class Ofertas extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
+  _toggleLoader(bool state) {
+    print("updating loader to ${!_isLoading}");
+    _isLoading = state;
+    setState(() {});
+    // Future.delayed(Duration(seconds: 4), () {
+    //   _isLoading = false;
+    //   setState(() {});
+    // });
+
+  } 
+
+  Widget _buildListTileItem(String title, Icon icon, String url) {
+    return ListTile(
+      leading: icon,
+      title: Text(
+        title,
+        style: TextStyle(fontSize: 16.0),
       ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/ofertas/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/lagoquadrada.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
+      onTap: () {
+        setState(() {
+          _controller.future.then((c) {
+            print("will load new url $url");
+            c.loadUrl(url);
+          });          
+          Navigator.pop(context);  
+          _toggleLoader(true);
+        });
+      },
     );
   }
-}
 
-/// TELA lOCALIZAÇÃO
-class Localizacao extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl: 'https://goo.gl/maps/49T4b1pLSoe5gcM2A',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/logocosmo.jpg"),
-                    fit: BoxFit.cover,
-                  )),
+  Drawer _buildDrawer() {
+    return Drawer(
+      child: ListView(
+        padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+        children: [
+          DrawerHeader(
+            child: Text(''),
+            decoration: BoxDecoration(
+              color: Color(0xffffffff),
+              image: DecorationImage(
+                image: AssetImage(_logoPath),
+                fit: BoxFit.fitHeight,
+              ),
             ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// TELA CONVENIOS
-class Convenios extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/convenios/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/logocosmo.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// TELA AVALIAR ATENDIMENTO
-class Avaliar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/atendimento/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/lagoquadrada.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// TELA CADASTRO DE VEÍCULOS
-class Cadastro extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/cadveiculo/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/lagoquadrada.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// TELA ESQUECEU A SENHA
-class Senha extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl: 'https://postocosmo.com.br/minha-conta/lost-password/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/lagoquadrada.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.explore),
-              title: Text('LOCALIZAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Localizacao(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// TELA POLITICA DE PRIVACIDADE
-class Politica extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          'icone/logoapposto.jpg',
-          fit: BoxFit.cover,
-          height: 38,
-        ),
-      ),
-      body: WebView(
-        initialUrl:
-            'https://postocosmo.com.br/politica-de-privacidade-e-uso-do-sistema/',
-        javascriptMode: JavascriptMode.unrestricted,
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            DrawerHeader(
-              child: Text(''),
-              decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  image: DecorationImage(
-                    image: AssetImage("icone/lagoquadrada.jpg"),
-                    fit: BoxFit.cover,
-                  )),
-            ),
-            ListTile(
-              leading: Icon(Icons.credit_card),
-              title: Text('PONTUAÇÃO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Pontos(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_offer),
-              title: Text('OFERTAS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Ofertas(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.extension),
-              title: Text('CONVÊNIOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Convenios(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.local_gas_station),
-              title: Text('AVALIAR ATENDIMENTO'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Avaliar(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.directions_bus),
-              title: Text('CADASTRO DE VEÍCULOS'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Cadastro(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.lock_outline),
-              title: Text('Esqueci a senha'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Senha(),
-                    ));
-              },
-            ),
-            ListTile(
-              leading: Icon(Icons.import_contacts),
-              title: Text('Política de Privacidade'),
-              onTap: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Politica(),
-                    ));
-              },
-            )
-          ],
-        ),
+          ),
+          _buildListTileItem(
+            "PONTUAÇÃO",
+            Icon(Icons.credit_card),
+            _hostUrl + 'minha-conta/points-and-rewards/',
+          ),
+          _buildListTileItem(
+            "OFERTAS",
+            Icon(Icons.local_offer),
+            _hostUrl + 'ofertas/',
+          ),
+          _buildListTileItem(
+            "LOCALIZAÇÃO",
+            Icon(Icons.explore),
+            _urlLocalizacao,
+          ),
+          _buildListTileItem(
+            "CONVÊNIOS",
+            Icon(Icons.extension),
+            _hostUrl + 'convenios/',
+          ),
+          _buildListTileItem(
+            "AVALIAR ATENDIMENTO",
+            Icon(Icons.local_gas_station),
+            _hostUrl + 'atendimento/',
+          ),
+          _buildListTileItem(
+            'POLÍTICA DE PRIVACIDADE',
+            Icon(Icons.import_contacts),
+            _hostUrl + 'politica-de-privacidade-e-uso-do-sistema/',
+          ),
+        ],
       ),
     );
   }
