@@ -32,7 +32,7 @@ class Splash extends State<SplashScreen> {
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          color: Color(0xff493163)
+          color: Color(0xff663399)
         ),
         child: Center(
           child: Container(

@@ -16,7 +16,7 @@ class _HomeState extends State<Home> {
   final Completer<WebViewController> _controller = Completer<WebViewController>();
   bool _isLoading = false;
 
-  String _hostUrl = "https://postocosmo.com.br/";
+  String _hostUrl = "https://app.postocosmo.com.br/";
   String _logoPath = "icone/logocosmo.png";
   String _appPostoLogoPath = "icone/logoapposto.jpg";
   String _urlLocalizacao = "https://goo.gl/maps/49T4b1pLSoe5gcM2A";
@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
             print("should update loader to false .... /n/n");
             _toggleLoader(false);
           },
-          initialUrl: _hostUrl + 'new/',
+          initialUrl: _hostUrl,
           javascriptMode: JavascriptMode.unrestricted,
           onWebViewCreated: (WebViewController webViewController) {
             _controller.complete(webViewController);
@@ -97,18 +97,24 @@ class _HomeState extends State<Home> {
     );
 
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Color(0xff493163),
-        centerTitle: true,
-        title: Image.asset(
-          _appPostoLogoPath,
-          fit: BoxFit.cover,
-          height: 38,
+    return WillPopScope(
+      onWillPop: () { 
+        _controller.future.then((value) => value.goBack());
+        return Future.value(false);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Color(0xff493163),
+          centerTitle: true,
+          title: Image.asset(
+            _appPostoLogoPath,
+            fit: BoxFit.cover,
+            height: 38,
+          ),
         ),
+        body: offBuilder,
+        drawer: _buildDrawer(),
       ),
-      body: offBuilder,
-      drawer: _buildDrawer(),
     );
   }
 
@@ -159,14 +165,14 @@ class _HomeState extends State<Home> {
             ),
           ),
           _buildListTileItem(
-            "PONTUAÇÃO",
-            Icon(Icons.credit_card),
-            _hostUrl + 'minha-conta/points-and-rewards/',
-          ),
-          _buildListTileItem(
             "OFERTAS",
             Icon(Icons.local_offer),
             _hostUrl + 'ofertas/',
+          ),
+          _buildListTileItem(
+            "MEUS DADOS",
+            Icon(Icons.person),
+            _hostUrl + 'my-account-2/',
           ),
           _buildListTileItem(
             "LOCALIZAÇÃO",
@@ -174,9 +180,14 @@ class _HomeState extends State<Home> {
             _urlLocalizacao,
           ),
           _buildListTileItem(
+            "PARCEIROS",
+            Icon(Icons.group),
+            _hostUrl + 'convenios/',
+          ),
+          _buildListTileItem(
             "CONVÊNIOS",
             Icon(Icons.extension),
-            _hostUrl + 'convenios/',
+            _hostUrl + 'grupos/',
           ),
           _buildListTileItem(
             "AVALIAR ATENDIMENTO",
