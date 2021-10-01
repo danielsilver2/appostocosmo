@@ -44,12 +44,11 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "br.com.appostocosmo"
+            applicationId "br.com.appostocosmo"
         minSdkVersion 20
         targetSdkVersion 29
-        versionCode 11
-        versionName "11.0"
+        versionCode 21
+        versionName "21.0"
         multiDexEnabled true
     }
 
